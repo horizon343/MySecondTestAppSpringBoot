@@ -13,9 +13,4 @@ public enum ErrorMessages {
     ErrorMessages(String description) {
         this.description = description;
     }
-
-    @JsonValue
-    public String getName() {
-        return description;
-    }
 }

@@ -1,7 +1,5 @@
 package com.shmygol.MySecondTestAppSpringBoot.model;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public enum Systems {
     ERP("Enterprise Resource Planning"),
     CRM("Customer Relationship Management"),
@@ -11,10 +9,5 @@ public enum Systems {
 
     Systems(String name) {
         this.name = name;
-    }
-
-    @JsonValue
-    public String getName() {
-        return name;
     }
 }

@@ -11,9 +11,4 @@ public enum Codes {
     Codes(String name) {
         this.name = name;
     }
-
-    @JsonValue
-    public String getName() {
-        return name;
-    }
 }

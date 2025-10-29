@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.Date;
 
 @RestController
@@ -31,6 +32,15 @@ public class MyController {
     public ResponseEntity<Response> feedback(@Valid @RequestBody Request request, BindingResult bindingResult) {
 
         log.info("request: {}", request);
+
+        Instant receivedTime = Instant.now();
+        if (request.getSystemTime() != null) {
+            Instant sentTime = Instant.parse(request.getSystemTime());
+            long diffMillis = java.time.Duration.between(sentTime, receivedTime).toMillis();
+            log.info("Время между отправкой (Service 1) и получением (Service 2): {} мс", diffMillis);
+        } else {
+            log.warn("В запросе отсутствует поле sentTime — невозможно вычислить разницу во времени");
+        }
 
         Response response = Response.builder()
                 .uid(request.getUid())
@@ -54,7 +64,7 @@ public class MyController {
             response.setErrorCode(ErrorCodes.VALIDATION_EXCEPTION);
             response.setErrorMessage(ErrorMessages.VALIDATION);
 
-            log.error("message: {}", ErrorMessages.VALIDATION.getName());
+            log.error("message: {}", ErrorMessages.VALIDATION);
 
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (UnsupportedCodeException e) {
@@ -62,7 +72,7 @@ public class MyController {
             response.setErrorCode(ErrorCodes.UNSUPPORTED_EXCEPTION);
             response.setErrorMessage(ErrorMessages.UNSUPPORTED);
 
-            log.error("message: {}", ErrorMessages.UNSUPPORTED.getName());
+            log.error("message: {}", ErrorMessages.UNSUPPORTED);
 
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -70,7 +80,7 @@ public class MyController {
             response.setErrorCode(ErrorCodes.UNKNOWN_EXCEPTION);
             response.setErrorMessage(ErrorMessages.UNKNOWN);
 
-            log.error("message: {}", ErrorMessages.UNKNOWN.getName());
+            log.error("message: {}", ErrorMessages.UNKNOWN);
 
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

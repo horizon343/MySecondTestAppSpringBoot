@@ -15,11 +15,6 @@ public enum ErrorCodes {
     }
 
     @JsonValue
-    public String getName() {
-        return name;
-    }
-
-    @JsonValue
     public String toString() {
         return name;
     }
