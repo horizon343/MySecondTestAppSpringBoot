@@ -3,11 +3,14 @@ package com.shmygol.MySecondTestAppSpringBoot.controller;
 import com.shmygol.MySecondTestAppSpringBoot.exception.UnsupportedCodeException;
 import com.shmygol.MySecondTestAppSpringBoot.exception.ValidationFailedException;
 import com.shmygol.MySecondTestAppSpringBoot.model.*;
+import com.shmygol.MySecondTestAppSpringBoot.service.ModifyRequestService;
+import com.shmygol.MySecondTestAppSpringBoot.service.ModifyResponseService;
 import com.shmygol.MySecondTestAppSpringBoot.service.ValidationService;
 import com.shmygol.MySecondTestAppSpringBoot.utils.DateTimeUtil;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,10 +25,21 @@ import java.util.Date;
 @Slf4j
 public class MyController {
     private final ValidationService validationService;
+    private final ModifyRequestService modifySourceRequestService;
+    private final ModifyRequestService modifySystemNameRequestService;
+    private final ModifyResponseService modifyResponseService;
 
     @Autowired
-    public MyController(ValidationService validationService) {
+    public MyController(
+            ValidationService validationService,
+            @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
+            @Qualifier("ModifySourceRequestService") ModifyRequestService modifySourceRequestService,
+            @Qualifier("ModifySystemNameRequestService") ModifyRequestService modifySystemNameRequestService
+    ) {
         this.validationService = validationService;
+        this.modifySourceRequestService = modifySourceRequestService;
+        this.modifySystemNameRequestService = modifySystemNameRequestService;
+        this.modifyResponseService = modifyResponseService;
     }
 
     @PostMapping(value = "/feedback")
@@ -84,7 +98,10 @@ public class MyController {
 
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        modifyResponseService.modify(response);
+        modifySystemNameRequestService.modify(request);
+        modifySourceRequestService.modify(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
     }
 }
