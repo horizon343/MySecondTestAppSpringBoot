@@ -1,6 +1,6 @@
 package com.shmygol.MySecondTestAppSpringBoot.exception;
 
-public class UnsupportedCodeException extends Exception {
+public class UnsupportedCodeException extends RuntimeException {
     public UnsupportedCodeException(String message) {
         super(message);
     }
